@@ -420,7 +420,7 @@ abstract contract BaseHonkVerifier is IVerifier {
             let free := mload(0x40)
 
             let count := 0x01
-            for {} lt(count, add(limit, 1)) { count := add(count, 1) } {
+            for {} lt(count, add(limit, 2)) { count := add(count, 1) } {
                 // Get loop offsets
                 let base_base := add(base, mul(count, 0x20))
                 let scalar_base := add(scalars, mul(count, 0x20))
