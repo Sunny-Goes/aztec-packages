@@ -166,10 +166,6 @@ function ecMul(Fr value, Honk.G1Point memory point) view returns (Honk.G1Point m
         // Call the ecMul precompile, it takes in the following
         // [point.x, point.y, scalar], and returns the result back into the free memory location.
         let success := staticcall(gas(), 0x07, free, 0x60, free, 0x40)
-        if iszero(success) {
-            // TODO: meaningful error
-            revert(0, 0)
-        }
         // Copy the result of the multiplication back into the result memory location.
         // Memory layout:
         // Address    |  value
