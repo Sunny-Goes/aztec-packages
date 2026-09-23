@@ -2,7 +2,7 @@
 // Copyright 2024 Aztec Labs.
 pragma solidity >=0.8.27;
 
-import {Fr, FrLib, P} from "./Fr.sol";
+import {Fr, FrLib, ONE, P} from "./Fr.sol";
 import {Honk, PAIRING_POINTS_SIZE} from "./HonkTypes.sol";
 import {Errors} from "./Errors.sol";
 
@@ -132,7 +132,7 @@ function mulWithSeperator(Honk.G1Point memory basePoint, Honk.G1Point memory oth
     Honk.G1Point memory result;
 
     result = ecMul(recursionSeperator, basePoint);
-    result = ecAdd(result, other);
+    result = ecAdd(result, ecMul(ONE, other));
 
     return result;
 }
@@ -164,17 +164,20 @@ function ecMul(Fr value, Honk.G1Point memory point) view returns (Honk.G1Point m
         mstore(add(free, 0x40), value)
 
         // Call the ecMul precompile, it takes in the following
-        // [point.x, point.y, scalar], and returns the result back into the free memory location.
-        let success := staticcall(gas(), 0x07, free, 0x60, free, 0x40)
+        // [point.x, point.y, scalar], and writes the result into the output buffer.
+        let out := add(free, 0x60)
+        mstore(out, 0)
+        mstore(add(out, 0x20), 0)
+        let success := staticcall(gas(), 0x07, free, 0x60, out, 0x40)
         // Copy the result of the multiplication back into the result memory location.
         // Memory layout:
         // Address    |  value
         // result     |  result.x
         // result + 0x20|  result.y
-        mstore(result, mload(free))
-        mstore(add(result, 0x20), mload(add(free, 0x20)))
+        mstore(result, mload(out))
+        mstore(add(result, 0x20), mload(add(out, 0x20)))
 
-        mstore(0x40, add(free, 0x60))
+        mstore(0x40, add(free, 0xa0))
     }
 
     return result;
