@@ -56,17 +56,17 @@ function convertPairingPointsToG1(Fr[PAIRING_POINTS_SIZE] memory pairingPoints)
 {
     // P0 (lhs): x = lo | (hi << 136)
     uint256 lhsX = Fr.unwrap(pairingPoints[0]);
-    lhsX |= Fr.unwrap(pairingPoints[1]) << 136;
+    lhsX |= Fr.unwrap(pairingPoints[1]) << 120;
 
     uint256 lhsY = Fr.unwrap(pairingPoints[2]);
-    lhsY |= Fr.unwrap(pairingPoints[3]) << 136;
+    lhsY |= Fr.unwrap(pairingPoints[3]) << 120;
 
     // P1 (rhs): x = lo | (hi << 136)
     uint256 rhsX = Fr.unwrap(pairingPoints[4]);
-    rhsX |= Fr.unwrap(pairingPoints[5]) << 136;
+    rhsX |= Fr.unwrap(pairingPoints[5]) << 120;
 
     uint256 rhsY = Fr.unwrap(pairingPoints[6]);
-    rhsY |= Fr.unwrap(pairingPoints[7]) << 136;
+    rhsY |= Fr.unwrap(pairingPoints[7]) << 120;
 
     // Reconstructed coordinates must be < Q to prevent malleability.
     // Without this, two different limb encodings could map to the same curve point
