@@ -11,7 +11,9 @@ uint256 constant Q = 21888242871839275222246405745257275088696311157297823662689
 // Fr utility
 
 function bytesToFr(bytes calldata proofSection) pure returns (Fr scalar) {
-    scalar = FrLib.fromBytes32(bytes32(proofSection));
+    // Decode the 32-byte section directly, skipping the canonical-form guard
+    // (value < MODULUS) that FrLib.fromBytes32 enforces.
+    scalar = Fr.wrap(uint256(bytes32(proofSection)));
 }
 
 // EC Point utilities
